@@ -1,15 +1,24 @@
-﻿from ..config import Settings
+from __future__ import annotations
+
+from ..config import Settings
 from .base_llm_client import BaseLLMClient
-from .ollama_client import OllamaClient
-from .mistral_client import MistralClient
 
 
 def create_llm_client(settings: Settings) -> BaseLLMClient:
+    provider = settings.llm_provider.lower()
 
-    if settings.llm_provider == "ollama":
-        return OllamaClient(settings)
+    if provider == "mistral":
+        if not settings.mistral_api_key:
+            raise ValueError("MISTRAL_API_KEY is required when LLM_PROVIDER=mistral")
+        from .mistral_client import MistralClient
 
-    if settings.llm_provider == "mistral":
         return MistralClient(settings)
 
-    raise ValueError(f"Unsupported LLM provider: {settings.llm_provider}")
+    if provider == "openai":
+        if not settings.openai_api_key:
+            raise ValueError("OPENAI_API_KEY is required when LLM_PROVIDER=openai")
+        from .openai_client import OpenAIClient
+
+        return OpenAIClient(settings)
+
+    raise ValueError(f"Unsupported LLM provider: {settings.llm_provider}. Supported providers: mistral, openai")
