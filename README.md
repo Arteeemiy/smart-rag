@@ -1,4 +1,4 @@
-# ua-smart-rag
+# smart-rag
 
 Production-style FastAPI RAG service template with Chroma, HuggingFace embeddings, and an OpenAI-compatible chat API.
 
